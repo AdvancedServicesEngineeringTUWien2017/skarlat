@@ -5,8 +5,8 @@ function die() {
 	exit 1
 }
 
-export IMAGE_NAME=lenaskarlat/ase/sensor-app
-export CONTAINER_NAME=lenaskarlat_ase_sensorapp
+export IMAGE_NAME=lenaskarlat/sensor-app
+export CONTAINER_NAME=lenaskarlat_sensorapp
 export PORT=34006
 
 docker images | grep "$IMAGE_NAME" >/dev/null 2>&1 || die "docker image '$IMAGE_NAME' not found -- run docker-build.sh first"

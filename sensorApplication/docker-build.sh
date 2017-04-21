@@ -9,8 +9,8 @@ function check() {
 	hash "$1" >/dev/null 2>&1 || die "command '$1' not found"
 }
 
-export IMAGE_NAME=lenaskarlat/ase/sensor-app
-export CONTAINER_NAME=lenaskarlat_ase_sensorapp
+export IMAGE_NAME=lenaskarlat/sensor-app
+export CONTAINER_NAME=lenaskarlat_sensorapp
 
 echo "Building docker image $IMAGE_NAME..."
 docker build -t "$IMAGE_NAME" . || die "docker build failed"
