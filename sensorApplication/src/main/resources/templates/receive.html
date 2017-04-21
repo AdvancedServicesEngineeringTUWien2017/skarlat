@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/main">
+<head/>
+
+<body>
+<th:block layout:fragment="content">
+
+
+    <!--/*@thymesVar id="objectList" type="java.lang.String"*/-->
+    <div class="panel panel-default">
+        <div class="panel-heading">Received Data Time Stamps</div>
+        <div class="panel-body">
+            <form id="receivedDataTimeStampsForm" method="post" class="form-horizontal">
+                <div th:unless="${#arrays.isEmpty(objectList)}" class="col-sm-9">
+                    <div class="bordered">
+                        <table id="preconditionsTable" class="table table-hover ">
+                            <thead>
+                            <tr>
+                                <th class="vertmiddle col-md-9">Time Stamp</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="time : ${objectList}">
+                                <td class="vertmiddle col-md-9 smaller" id="time" th:text="${time}">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+</body>
+</html>
