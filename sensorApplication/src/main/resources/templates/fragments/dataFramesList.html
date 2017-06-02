@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/main">
+
+<head></head>
+<body>
+<th:block th:fragment="content(object)">
+    <!--/*@thymesVar id="object" type="at.ac.tuwien.infosys.entities.SensorDescription"*/-->
+    <div class="form-group">
+        <label class="control-label col-sm-3">Data Frames</label>
+        <label th:if="${#arrays.length(object.dataFrames) == 0}" id="ifNoDataFrames" class="control-label col-sm-3">No data</label>
+        <div th:unless="${#arrays.length(object.dataFrames) == 0}" class="col-sm-9">
+            <div class="bordered" >
+                <table id="dataFramesTable" class="table table-hover" >
+                    <thead>
+                    <tr>
+                        <th class="vertmiddle col-md-11">Time Stamp</th>
+                        <th class="vertmiddle col-md-1"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="dataFrame : ${object.dataFrames}">
+                        <td style="word-wrap: break-word; max-width: 100px;" class="vertmiddle col-md-12 smaller" th:text="${dataFrame.timeStamp}"></td>
+                        <td class="vertmiddle col-md-1">
+                            <div class="pull-right">
+                                <a th:href="${'/sensors' + '/show/' + dataFrame.id}" type="submit"
+                                   class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-picture" title="Show data"></span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</th:block>
+</body>
+</html>

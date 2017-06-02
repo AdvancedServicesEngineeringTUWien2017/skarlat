@@ -5,7 +5,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -18,8 +21,10 @@ import java.util.*;
 public class SensorDataController {
 
     private List<String> timeStamps = new ArrayList<>();
+    private final String sensorId ="2";
+    private final String sensorName = "A2";
 
-    private List<String> paths = Utils.getFilePathsInFolder("A2");
+    private List<String> paths = Utils.getFilePathsInFolder(sensorName);
     private Iterator i = paths.iterator();
 
     @RequestMapping(value = "data", method = RequestMethod.POST)
@@ -31,7 +36,7 @@ public class SensorDataController {
     public String acceptData() {
         String html = "<html><head></head><body style='background: white; color: black; font-family: Verdana'>" +
                 "<h1>Sensor Status Page</h1>";
-        html += "<p><b>Sensor A2</b></p>";
+        html += "<p><b>Sensor "+sensorName+"</b></p>";
         html += "<hr/>";
         html += "<p>  Sent Data Time Stamps </p>";
         html += "<ol>";
@@ -56,10 +61,20 @@ public class SensorDataController {
                 String time = Objects.toString(rdf.time, null);
                 String data = Arrays.toString(rdf.data);
                 List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+                nvps.add(new BasicNameValuePair("sensorId", sensorId));
+                nvps.add(new BasicNameValuePair("sensorName", sensorName));
                 nvps.add(new BasicNameValuePair("time", time));
                 nvps.add(new BasicNameValuePair("data", data));
-                Utils.sendRequest("http://127.0.0.1:8080/receive", nvps);
-                Utils.sendRequest("http://127.0.0.1:8081/data", nvps);
+
+                Properties prop = new Properties();
+                InputStream input = null;
+                input = new FileInputStream("src/main/resources/application.properties");
+                prop.load(input);
+                String port = prop.getProperty("server.port");
+                String cloudUrl = prop.getProperty("cloudUrl");
+
+                Utils.sendRequest(cloudUrl+"/sensors/add", nvps);
+                Utils.sendRequest("http://127.0.0.1:" + port + "/data", nvps);
             }
         } catch (IOException e) {
             e.printStackTrace();

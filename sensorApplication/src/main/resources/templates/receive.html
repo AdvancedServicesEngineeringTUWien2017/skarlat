@@ -11,18 +11,26 @@
     <div class="panel panel-default">
         <div class="panel-heading">Received Data Time Stamps</div>
         <div class="panel-body">
-            <form id="receivedDataTimeStampsForm" method="post" class="form-horizontal">
+         <!--   <form id="receivedDataTimeStampsForm" method="post" class="form-horizontal">   -->
                 <div th:unless="${#arrays.isEmpty(objectList)}" class="col-sm-9">
                     <div class="bordered">
-                        <table id="preconditionsTable" class="table table-hover ">
+                        <table id="preconditionsTable" class="table">
                             <thead>
                             <tr>
-                                <th class="vertmiddle col-md-9">Time Stamp</th>
+                                <th class="vertmiddle col-md-8">Time Stamp</th>
+                                <th class="vertmiddle col-md-1"></th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="time : ${objectList}">
-                                <td class="vertmiddle col-md-9 smaller" id="time" th:text="${time}">
+                                <td class="vertmiddle col-md-7 smaller" id="time" th:text="${time}">
+                                </td>
+                                <td class="vertmiddle col-md-1">
+                                    <div class="pull-right">
+                                        <span class="btn btn-default btn-sm show-picture">
+                                            <span class="glyphicon glyphicon-picture " title="Show icon" id="show-picture"/>
+                                        </span>
+                                    </div>
                                 </td>
                             </tr>
                             </tbody>
@@ -30,8 +38,9 @@
                     </div>
 
                 </div>
-            </form>
+          <!--  </form> -->
         </div>
+
     </div>
 </th:block>
 
