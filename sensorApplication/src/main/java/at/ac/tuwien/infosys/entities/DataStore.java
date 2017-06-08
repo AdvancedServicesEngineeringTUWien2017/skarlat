@@ -4,6 +4,7 @@ import at.ac.tuwien.infosys.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -40,7 +41,12 @@ public class DataStore {
 
 
     public void putSensorDataFrame(String sensorId, String timeStamp, String data) {
-        DataFrame dataFrame = new DataFrame(sensorId, timeStamp, data);
+        DataFrame dataFrame = null;
+        try {
+            dataFrame = new DataFrame(sensorId, timeStamp, data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (sensorDataFrameMap.containsKey(sensorId)) {
             sensorDataFrameMap.get(sensorId).add(dataFrame);
         } else {

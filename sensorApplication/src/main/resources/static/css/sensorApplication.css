@@ -22,6 +22,11 @@ display: inline-table;
 
 }
 
+tr.selected {
+ background: #ccc;
+}
+
+
 .table tbody{
   overflow-y: scroll;
   display:block;
@@ -29,11 +34,28 @@ display: inline-table;
   width: 100%;
 
 }
-
+div#div__graph.svg-single-view {
+  width:480;
+  height:360;
+  border:1px solid #ccc;
+ }
+div#div__graph__palette.svg-single-view {
+  width:451;
+  height:80;
+  border:1px solid #ccc;
+ }
+svg#graph {
+    width:480;
+    height:360;
+}
+svg#graph__palette {
+    width:451;
+    height:80;
+}
 
 .table thead>tr>th{
     background-color: #f5f5f5;
-    border-radius: 4px;
+
 }
 
 
