@@ -2,8 +2,10 @@ package at.ac.tuwien.infosys.controllers;
 
 import at.ac.tuwien.infosys.ModelAttributes;
 import at.ac.tuwien.infosys.Utils;
+import at.ac.tuwien.infosys.access.InfluxAccess;
 import at.ac.tuwien.infosys.entities.DataStore;
 import at.ac.tuwien.infosys.ui.MessagesUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +20,10 @@ public class MainNavController {
     public static final String SENSORS_URL="/sensors";
     public static final String MAP_URL="/map";
     public static final String VISUAL_URL="/visual";
-    public static final String RECEIVE_URL="/receive";
+
+
+    @Autowired
+    private InfluxAccess influxAccess;
 
 
     DataStore dataStoreInstance = DataStore.getInstance();
@@ -27,20 +32,11 @@ public class MainNavController {
     public String index() {return "index";}
 
 
-    @RequestMapping(RECEIVE_URL)
-    public String receive(Model model, RedirectAttributes redirectAttributes) {
-        try {
-        //    model.addAttribute(ModelAttributes.OBJECT_LIST, Utils.transformLongToDate());
-        } catch (Exception ex) {
-            return redirectWithError(redirectAttributes, MainNavController.INDEX_URL, "Unable to get access to the data", ex);
-        }
-        return "receive";
-    }
-
     @RequestMapping(SENSORS_URL)
     public String getSensors(Model model, RedirectAttributes redirectAttributes) {
         try {
-            model.addAttribute(ModelAttributes.OBJECTS, dataStoreInstance.getAllSensors());
+
+            model.addAttribute(ModelAttributes.OBJECTS, influxAccess.getAllSensors());
 
         } catch (Exception ex) {
             return redirectWithError(redirectAttributes, MainNavController.INDEX_URL, "Unable to get access to the data", ex);
@@ -51,7 +47,7 @@ public class MainNavController {
     @RequestMapping(MAP_URL)
     public String showMap(Model model, RedirectAttributes redirectAttributes) {
         try {
-            model.addAttribute(ModelAttributes.OBJECTS, dataStoreInstance.getAllSensors());
+            model.addAttribute(ModelAttributes.OBJECTS, influxAccess.getAllSensors());
         } catch (Exception ex) {
             return redirectWithError(redirectAttributes, MainNavController.INDEX_URL, "Unable to get access to the data", ex);
         }

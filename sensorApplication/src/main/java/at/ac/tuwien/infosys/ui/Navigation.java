@@ -16,9 +16,9 @@ public class Navigation {
                 new NavEntry (MainNavController.INDEX_URL,"index", "Start"),
                 new NavEntry(MainNavController.MAP_URL, "map", "Map"),
                 new NavEntry(MainNavController.SENSORS_URL,"sensors", "Sensors"),
-                new NavEntry(MainNavController.VISUAL_URL,"visual", "Visual"),
+                new NavEntry(MainNavController.VISUAL_URL,"visual", "Visual"));
 
-                new NavEntry (MainNavController.RECEIVE_URL,"receive", "Received data"));
+             //   new NavEntry (MainNavController.RECEIVE_URL,"receive", "Received data"));
     }
 
     private static class NavEntry {

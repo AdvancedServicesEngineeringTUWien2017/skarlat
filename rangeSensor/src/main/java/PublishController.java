@@ -18,6 +18,7 @@ import connection.CommandArguments;
 import connection.ConnectionManager;
 import org.json.JSONObject;
 
+
 import java.io.IOException;
 import java.util.*;
 
@@ -25,9 +26,9 @@ import java.util.*;
  * Created by lenaskarlat on 6/13/17.
  */
 public class PublishController {
-    private static String topic;
+    private static String topic="";
     private static final AWSIotQos TestTopicQos = AWSIotQos.QOS0;
-    private static String sensorName;
+    private static String sensorName="";
 
     private static AWSIotMqttClient awsIotClient;
 
@@ -126,5 +127,7 @@ public class PublishController {
         Thread nonBlockingPublishThread = new Thread(new NonBlockingPublisher(awsIotClient));
         nonBlockingPublishThread.start();
         nonBlockingPublishThread.join();
+
     }
+
 }

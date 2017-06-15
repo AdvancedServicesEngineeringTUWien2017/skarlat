@@ -24,8 +24,8 @@
          frameRect.setAttribute("stroke", "orange");
          frameRect.setAttribute("stroke-width", 1);
          frameRect.setAttribute("class", "sensorOnMap");
-         svg.appendChild(frameRect);
-
+         svg.appendChild(frameRect);}
+    for (var i=0; i<numberOfSensors;i++){
          var note = document.createElementNS("http://www.w3.org/2000/svg", 'rect');//this is the frame rectangle of the graph
          note.setAttribute("id", table.rows[i].cells[1].textContent+"note");
          note.setAttribute("x",  parseInt(table.rows[i].cells[3].textContent)+5);

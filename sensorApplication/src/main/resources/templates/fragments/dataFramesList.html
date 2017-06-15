@@ -11,7 +11,7 @@
         <label th:if="${#arrays.length(object.dataFrames) == 0}" id="ifNoDataFrames" class="control-label col-sm-3">No data</label>
         <div th:unless="${#arrays.length(object.dataFrames) == 0}" class="col-sm-9">
             <div class="bordered" >
-                <table id="dataFramesTable" class="table table-hover" >
+                <table id="dataFramesTable" class="table smaller-table table-hover" >
                     <thead>
                     <tr>
                         <th class="vertmiddle col-md-11">Time Stamp</th>

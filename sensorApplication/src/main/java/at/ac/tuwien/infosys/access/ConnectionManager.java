@@ -1,3 +1,5 @@
+package at.ac.tuwien.infosys.access;
+
 /*
  * Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -12,8 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package connection;
-
 /**
  * Created by lenaskarlat on 6/13/17.
  */
@@ -41,7 +41,7 @@ import java.util.Properties;
  * certificate from the resource files.
  */
 public class ConnectionManager {
-    private static final String PropertyFile = "src/main/resources/application.properties";
+    private static final String PropertyFile = "resources/application.properties";
 
     public static class KeyStorePasswordPair {
         public KeyStore keyStore;
