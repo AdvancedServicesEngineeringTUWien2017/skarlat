@@ -27,7 +27,7 @@ tr.selected {
 }
 
 
-.table tbody{
+.smaller-table tbody{
   overflow-y: scroll;
   display:block;
   height: 200px;            //  <-- Select the height of the body
