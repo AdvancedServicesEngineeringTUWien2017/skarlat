@@ -116,9 +116,9 @@ public class DataStore {
         return sensors;
     }
 
-    public SensorDescription getSensorById(String id){
+    public SensorDescription getSensorById(String sensorName){
         for (SensorDescription sensor: sensors){
-            if (sensor.getId().equals(id))
+            if (sensor.getId().equals(sensorName))
             return sensor;
         }
         return null;

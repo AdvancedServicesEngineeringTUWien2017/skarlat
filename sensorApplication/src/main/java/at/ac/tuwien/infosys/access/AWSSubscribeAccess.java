@@ -1,5 +1,6 @@
 package at.ac.tuwien.infosys.access;
 
+import at.ac.tuwien.infosys.session.SessionProxy;
 import com.amazonaws.services.iot.client.AWSIotException;
 import com.amazonaws.services.iot.client.AWSIotMqttClient;
 import com.amazonaws.services.iot.client.AWSIotQos;
@@ -21,22 +22,18 @@ import java.util.Properties;
 @Service
 public class AWSSubscribeAccess {
 
+    private final SessionProxy sessionProxy;
     private static final AWSIotQos TestTopicQos = AWSIotQos.QOS0;
     private static String[] topics;
+    private static AWSIotMqttClientHolder awsIotClientHolder;
 
-    private static AWSIotMqttClient awsIotClient;
-
-    public static void setClient(AWSIotMqttClient client) {
-        awsIotClient = client;
-    }
-
-
-    public AWSSubscribeAccess() {
+    @Autowired
+    public AWSSubscribeAccess(AWSIotMqttClientHolder clientHolder, SessionProxy sessionProxy) {
+        this.sessionProxy=sessionProxy;
+        awsIotClientHolder = clientHolder;
         initClient();
         try {
-            awsIotClient.connect();
-            AWSIotTopic topic = new TopicListener(topics[0], TestTopicQos);
-            awsIotClient.subscribe(topic, false);
+            awsIotClientHolder.getAwsIotMqttClient().connect();
         } catch (AWSIotException e) {
             e.printStackTrace();
         }
@@ -50,30 +47,37 @@ public class AWSSubscribeAccess {
         } catch (IOException e) {
             e.printStackTrace();
         }
-       // String value = prop.getProperty(name);
         String clientEndpoint = prop.getProperty("clientEndpoint");
-      //  String clientEndpoint = ConnectionManager.getConfig("clientEndpoint");
         String clientId = prop.getProperty("clientId");
         topics = (prop.getProperty("topics")).split(",");
         String certificateFile = prop.getProperty("certificateFile");
         String privateKeyFile = prop.getProperty("privateKeyFile");
-        if (awsIotClient == null && certificateFile != null && privateKeyFile != null) {
+        if (awsIotClientHolder.getAwsIotMqttClient() == null && certificateFile != null && privateKeyFile != null) {
             String algorithm = ConnectionManager.getConfig("keyAlgorithm");
             ConnectionManager.KeyStorePasswordPair pair = ConnectionManager.getKeyStorePasswordPair(certificateFile, privateKeyFile, algorithm);
-            awsIotClient = new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
+            awsIotClientHolder.setAwsIotMqttClient(new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword));
         }
-        if (awsIotClient == null) {
+        if (awsIotClientHolder.getAwsIotMqttClient() == null) {
             String awsAccessKeyId = ConnectionManager.getConfig("awsAccessKeyId");
             String awsSecretAccessKey = ConnectionManager.getConfig("awsSecretAccessKey");
             String sessionToken = ConnectionManager.getConfig("sessionToken");
 
             if (awsAccessKeyId != null && awsSecretAccessKey != null) {
-                awsIotClient = new AWSIotMqttClient(clientEndpoint, clientId, awsAccessKeyId, awsSecretAccessKey,
-                        sessionToken);
+                awsIotClientHolder.setAwsIotMqttClient(new AWSIotMqttClient(clientEndpoint, clientId, awsAccessKeyId, awsSecretAccessKey,
+                        sessionToken));
             }
         }
-        if (awsIotClient == null) {
+        if (awsIotClientHolder.getAwsIotMqttClient() == null) {
             throw new IllegalArgumentException("Failed to construct client due to missing certificate or credentials.");
+        }
+    }
+
+    public void subscribe(){
+        AWSIotTopic topic = new TopicListener(topics[0], TestTopicQos,sessionProxy.getInfluxSessionBean().getInfluxAccess());
+        try {
+            awsIotClientHolder.getAwsIotMqttClient().subscribe(topic, false);
+        } catch (AWSIotException e) {
+            e.printStackTrace();
         }
     }
 }

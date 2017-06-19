@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 
 import java.awt.*;
 import java.io.*;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -19,7 +20,6 @@ public class DataFrame {
     private String id;
     private String sensorId;
     private String timeStamp;
-
     private String data;
     private String[][] matrix;
     private String[][] colors;
@@ -33,9 +33,10 @@ public class DataFrame {
         this.timeStamp = timeStamp;
         this.data = data;
         this.id = UUID.randomUUID().toString();
+        if (!data.equals("")){
         this.matrix = makeFrameMatrix(data);
         this.colors = makeFrameColors();
-        this.svgImage = createSvgString();
+        this.svgImage = createSvgString();}
     }
 
     public String getId() {
@@ -47,7 +48,7 @@ public class DataFrame {
     }
 
     public String getTimeStamp() {
-        return Utils.transformLongToDate(timeStamp);
+        return timeStamp;
     }
 
     public void setTimeStamp(String timeStamp) {
@@ -62,10 +63,19 @@ public class DataFrame {
         this.data = data;
     }
 
-    public String[][] getColors() {
+    public String[][] getColors() { return colors; }
 
-        return colors;
+    public String getStringColors(){
+        String lineSeparator = System.lineSeparator();
+        StringBuilder sb = new StringBuilder();
+
+        for (String[] row : colors) {
+            sb.append(Arrays.toString(row))
+                    .append(lineSeparator);
+        }
+        return sb.toString();
     }
+
 
     public String getSvgImage() { return svgImage; }
 
@@ -170,5 +180,67 @@ public class DataFrame {
         return colors;
     }
 
+
+    public String getSensorId() {
+        return sensorId;
+    }
+
+    public String[][] getMatrix() {
+        return matrix;
+    }
+
+    public String getStringMatrix(){
+        String lineSeparator = System.lineSeparator();
+        StringBuilder sb = new StringBuilder();
+
+        for (String[] row : matrix) {
+            sb.append(Arrays.toString(row))
+                    .append(lineSeparator);
+        }
+
+       return sb.toString();
+    }
+
+
+    public void setSensorId(String sensorId) { this.sensorId = sensorId; }
+
+    public void setMatrix(String[][] matrix) { this.matrix = matrix; }
+
+    public void setStringMatrix(String matrixString) {
+        String[][] matrix = new String[120][160];
+        String[] rows = matrixString.split(System.lineSeparator());
+        int r=0;
+        for(String row:rows){
+            matrix[r]=row.split(",");
+            r++;
+        }
+        this.matrix = matrix;
+    }
+
+    public void setColors(String[][] colors) { this.colors = colors; }
+
+    public void setStringColors(String colorsString) {
+        String[][] colors = new String[120][160];
+        String[] rows = colorsString.split(System.lineSeparator());
+        int r=0;
+        for(String row:rows){
+            colors[r]=row.split(",");
+            r++;
+        }
+        this.colors = colors;
+    }
+
+    public void setSvgImage(String svgImage) { this.svgImage = svgImage; }
+
+    @Override
+    public String toString() {
+        return sensorId +
+                ",id="+id+
+                ",data=" + data  +
+                ",matrix=" + Arrays.toString(matrix) +
+                ",colors=" + Arrays.toString(colors) +
+                ",svgImage=" + svgImage +
+                " " + timeStamp;
+    }
 }
 

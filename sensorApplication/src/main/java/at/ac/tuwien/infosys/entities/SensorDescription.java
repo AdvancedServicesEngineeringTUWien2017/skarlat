@@ -11,7 +11,6 @@ import java.util.List;
  */
 public class SensorDescription {
 
-    @JsonProperty("sensorID")
     private String id;
 
     private boolean isTurnedOff=true;
@@ -34,6 +33,7 @@ public class SensorDescription {
     }
 
     public SensorDescription(boolean isTurnedOff, String sensorName, String sensorType, int xCoordinate, int yCoordinate, int zCoordinate) {
+        this.id=sensorName;
         this.isTurnedOff = isTurnedOff;
         this.sensorName = sensorName;
         this.sensorType = sensorType;
@@ -42,6 +42,13 @@ public class SensorDescription {
         this.zCoordinate = zCoordinate;
         calculateTransformedCoordinates(xCoordinate,yCoordinate);
 
+    }
+
+    public SensorDescription(boolean isTurnedOff, String sensorName, String sensorType) {
+        this.id=sensorName;
+        this.isTurnedOff = isTurnedOff;
+        this.sensorName = sensorName;
+        this.sensorType = sensorType;
     }
 
     private void calculateTransformedCoordinates(int xCoordinate, int yCoordinate) {
@@ -70,7 +77,7 @@ public class SensorDescription {
             else setyTransformed((int)((y_max+(-1)*yCoordinate)*coefY/1000));
 
         }
-        System.out.println(xCoordinate+"->"+getxTransformed()+". "+yCoordinate+"->"+ getyTransformed());
+     //   System.out.println(xCoordinate+"->"+getxTransformed()+". "+yCoordinate+"->"+ getyTransformed());
     }
 
     public String getId() {
@@ -104,7 +111,6 @@ public class SensorDescription {
     public void setSensorType(String sensorType) {
         this.sensorType = sensorType;
     }
-
 
     public int getxCoordinate() {
         return xCoordinate;

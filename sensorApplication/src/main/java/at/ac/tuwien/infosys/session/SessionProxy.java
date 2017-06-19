@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 public interface SessionProxy {
     SensorSessionBean getSensorSessionBean();
 
+    InfluxSessionBean getInfluxSessionBean();
+
+    AWSSubscribeSessionBean getAWSSubscribeSessionBean();
+
 }
 
 @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
@@ -22,11 +26,26 @@ class SessionProxyImpl implements SessionProxy {
     @Autowired
     private SensorSessionBean sensorSessionBean;
 
+    @Autowired
+    private InfluxSessionBean influxSessionBean;
+
+    @Autowired
+    private AWSSubscribeSessionBean awsSubscribeSessionBean;
+
+
 
     @Override
     public SensorSessionBean getSensorSessionBean() {
         return sensorSessionBean;
     }
 
+    @Override
+    public InfluxSessionBean getInfluxSessionBean() {
+        return influxSessionBean;
+    }
 
+    @Override
+    public AWSSubscribeSessionBean getAWSSubscribeSessionBean() {
+        return awsSubscribeSessionBean;
+    }
 }

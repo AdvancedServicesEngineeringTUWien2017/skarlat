@@ -62,7 +62,7 @@ public class RawDataFrame {
         }
 
         // read time stamp
-        time = Long.parseLong(headerString.substring(4, 4+13));
+        time = Long.parseLong(headerString.substring(4, 4+13))*1000000; //*1000000 because influx reads nanoseconds
 
 
         // read data length, radix=16, i.e., parse from hexadecimal

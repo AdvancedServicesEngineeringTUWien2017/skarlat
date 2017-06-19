@@ -1,9 +1,8 @@
 package at.ac.tuwien.infosys.controllers;
 
 import at.ac.tuwien.infosys.ModelAttributes;
-import at.ac.tuwien.infosys.Utils;
-import at.ac.tuwien.infosys.access.InfluxAccess;
 import at.ac.tuwien.infosys.entities.DataStore;
+import at.ac.tuwien.infosys.session.SessionProxy;
 import at.ac.tuwien.infosys.ui.MessagesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,10 +22,7 @@ public class MainNavController {
 
 
     @Autowired
-    private InfluxAccess influxAccess;
-
-
-    DataStore dataStoreInstance = DataStore.getInstance();
+    private SessionProxy sessionProxy;
 
     @RequestMapping(INDEX_URL)
     public String index() {return "index";}
@@ -35,9 +31,8 @@ public class MainNavController {
     @RequestMapping(SENSORS_URL)
     public String getSensors(Model model, RedirectAttributes redirectAttributes) {
         try {
-
-            model.addAttribute(ModelAttributes.OBJECTS, influxAccess.getAllSensors());
-
+            model.addAttribute(ModelAttributes.OBJECTS, sessionProxy.getInfluxSessionBean().getAllSensors());
+            sessionProxy.getAWSSubscribeSessionBean().subscribe();
         } catch (Exception ex) {
             return redirectWithError(redirectAttributes, MainNavController.INDEX_URL, "Unable to get access to the data", ex);
         }
@@ -47,7 +42,7 @@ public class MainNavController {
     @RequestMapping(MAP_URL)
     public String showMap(Model model, RedirectAttributes redirectAttributes) {
         try {
-            model.addAttribute(ModelAttributes.OBJECTS, influxAccess.getAllSensors());
+            model.addAttribute(ModelAttributes.OBJECTS, sessionProxy.getInfluxSessionBean().getAllSensors());
         } catch (Exception ex) {
             return redirectWithError(redirectAttributes, MainNavController.INDEX_URL, "Unable to get access to the data", ex);
         }
@@ -57,7 +52,6 @@ public class MainNavController {
     @RequestMapping(VISUAL_URL)
     public String showVisual(Model model, RedirectAttributes redirectAttributes) {
         try {
-            //model.addAttribute(ModelAttributes.OBJECT_LIST, Utils.transformLongToDate(dataStoreInstance.getTimeStampsList()));
         } catch (Exception ex) {
             return redirectWithError(redirectAttributes, MainNavController.INDEX_URL, "Unable to get access to the data", ex);
         }

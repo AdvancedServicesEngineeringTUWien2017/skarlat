@@ -26,24 +26,12 @@ import static at.ac.tuwien.infosys.controllers.MainNavController.redirectWithErr
 @Controller
 @RequestMapping(SENSORS_URL)
 public class SensorApplicationController {
-    private static final String RECEIVE_URL = "/receive";
     private static final String ID = "/{id}";
-
-    DataStore dataStoreInstance = DataStore.getInstance();
-
     private final SessionProxy sessionProxy;
 
     @Autowired
     public SensorApplicationController(SessionProxy sessionProxy) {
         this.sessionProxy = sessionProxy;
-    }
-
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String acceptData(@RequestParam("sensorId") String sensorId, @RequestParam("sensorName") String sensorName, @RequestParam("time") String time, @RequestParam("data") String data,  Model model, RedirectAttributes redirectAttributes) throws Exception {
-        //Utils.makeFrameMatrix(data);
-        dataStoreInstance.putSensorDataFrame(sensorId, time, data);
-        model.addAttribute(ModelAttributes.OBJECTS, dataStoreInstance.getAllSensors());
-        return "sensors";
     }
 
     @RequestMapping(value = ID, method = RequestMethod.GET)
@@ -62,7 +50,7 @@ public class SensorApplicationController {
     }
 
     protected void initSensor(Model model, String id) throws AccessException {
-        sessionProxy.getSensorSessionBean().init(dataStoreInstance.getSensorById(id), model);
+        sessionProxy.getSensorSessionBean().init(sessionProxy.getInfluxSessionBean().getSensorByName(id), model);
     }
 
 

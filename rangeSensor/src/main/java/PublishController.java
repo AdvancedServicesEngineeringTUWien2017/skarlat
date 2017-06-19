@@ -14,8 +14,14 @@
  */
 
 import com.amazonaws.services.iot.client.*;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import connection.CommandArguments;
 import connection.ConnectionManager;
+import connection.Thing;
 import org.json.JSONObject;
 
 
@@ -29,8 +35,10 @@ public class PublishController {
     private static String topic="";
     private static final AWSIotQos TestTopicQos = AWSIotQos.QOS0;
     private static String sensorName="";
+    private static String thingName="";
 
     private static AWSIotMqttClient awsIotClient;
+
 
     public static void setClient(AWSIotMqttClient client) {
         awsIotClient = client;
@@ -50,7 +58,6 @@ public class PublishController {
         @Override
         public void run() {
             while (true) {
-                AWSIotMessage message = null;
                 if (!i.hasNext()) {
                     i = paths.iterator();
                 }
@@ -66,15 +73,14 @@ public class PublishController {
                     String time = Objects.toString(rdf.time, null);
                     String data = Arrays.toString(rdf.data);
 
-                    JSONObject json = new JSONObject();
-                    json.put("sensorName", sensorName);
-                    json.put("time", time);
-                    json.put("data", data);
+                    StringBuilder payload=new StringBuilder(sensorName+";");
+                    payload.append(time+";");
+                    payload.append(data);
+                    AWSIotMessage message = new NonBlockingPublishListener(topic, TestTopicQos, payload.toString());
 
-                    String payload = json.toString();
-                    message = new NonBlockingPublishListener(topic, TestTopicQos, payload);
                     try {
                         awsIotClient.publish(message);
+
                     } catch (AWSIotException e) {
                         System.out.println(System.currentTimeMillis() + ": publish failed");
                     }
@@ -93,7 +99,7 @@ public class PublishController {
 
         String clientEndpoint = arguments.getNotNull("clientEndpoint", ConnectionManager.getConfig("clientEndpoint"));
         String clientId = arguments.getNotNull("clientId", ConnectionManager.getConfig("clientId"));
-
+        thingName = arguments.getNotNull("thingName",ConnectionManager.getConfig("thingName"));
         sensorName = clientId;
         topic = arguments.getNotNull("topic", ConnectionManager.getConfig("topic"));
 
@@ -114,7 +120,6 @@ public class PublishController {
                         sessionToken);
             }
         }
-
         if (awsIotClient == null) {
             throw new IllegalArgumentException("Failed to construct client due to missing certificate or credentials.");
         }
@@ -127,7 +132,6 @@ public class PublishController {
         Thread nonBlockingPublishThread = new Thread(new NonBlockingPublisher(awsIotClient));
         nonBlockingPublishThread.start();
         nonBlockingPublishThread.join();
-
     }
 
 }
