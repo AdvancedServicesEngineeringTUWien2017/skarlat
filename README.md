@@ -45,13 +45,11 @@ This software is built upon the package provided by the AWS IoT Connect Wizard.
 
 The main class is PublishController. The main method takes the arguments from the command line.
 To run the sensor application 
-	mvn exec:java -Dexec.mainClass="PublishController" -Dexec.args="-clientEndpoint <here the enpoint must be specified for the AWS IoT, this endpoint is taken from AWS IoT, go to main dashboard and then settings> -clientId <this client id has to conform to the client id indicated in the security policy of a sensor thing created in aws iot dashboard, currently this policy allows any clientId> -certificateFile <full path to the certificate for ssh connection to the thing (seedetails for AWS IoT) The extension of file has to be .pem.crt> -privateKeyFile <this is the full path to the privvate key file provided along with certificate, the extension should be .pem.key> -topic <here a topic has to be indicated where our sensor has to publish messages, has to be sensors/sensor_A1 without quotes> -thingName <thing name has to be indicated here, thing name is the one which was used to create a sensor thing in the aws iot dashbord, please note, this is not 'arn' provided in the thing details>"
+	$mvn exec:java -Dexec.mainClass="PublishController" -Dexec.args="-clientEndpoint <here the enpoint must be specified for the AWS IoT, this endpoint is taken from AWS IoT, go to main dashboard and then settings> -clientId <this client id has to conform to the client id indicated in the security policy of a sensor thing created in aws iot dashboard, currently this policy allows any clientId> -certificateFile <full path to the certificate for ssh connection to the thing (seedetails for AWS IoT) The extension of file has to be .pem.crt> -privateKeyFile <this is the full path to the privvate key file provided along with certificate, the extension should be .pem.key> -topic <here a topic has to be indicated where our sensor has to publish messages, has to be sensors/sensor_A1 without quotes> -thingName <thing name has to be indicated here, thing name is the one which was used to create a sensor thing in the aws iot dashbord, please note, this is not 'arn' provided in the thing details>"
 
 Sensor pass message in format {"dataFrameMessage":<content>}, where content is a big ;-separated string consisting of sensor name, timestamp, and array of numbers as string.
 For example: {"dataFrameMessage":"sensor_A1;1352866076810000000;[4798, ....<here the array consists of 19200 values that represent distance from sensor to objects in a certain resolution, the resolution is 120x160> "}
-
-
-
+As was said before, the message goes to the topic sensors/sensorName and then according to this topic, sensor data is received by application, and also processed by lambda functions (the details will be stated in the AWS IoT section)
 
 ---------------------------------------------------------
 Database Service
@@ -99,7 +97,7 @@ Details: https://github.com/influxdata/influxdb-java
 
 To write data to Influx, it is necessary to provide a string of measurement, where the first word in that string is like a table name, then go tags and values. Tags are indexed, values-not. 
 Example insert data with curl with credentials:
-	curl -i -XPOST 'http://ip.of.influx.db:8086/write?db=DataBaseName' -u login:password --data-binary 'seriesName,tag1=value01,tag2=value02 value=someValue time'
+	$curl -i -XPOST 'http://ip.of.influx.db:8086/write?db=DataBaseName' -u login:password --data-binary 'seriesName,tag1=value01,tag2=value02 value=someValue time'
 
 Inserting data to Influx is performed in from the main application and from lambda functions triggered by receiving a message to AWS IoT MQTT from AWS IoT.
 
