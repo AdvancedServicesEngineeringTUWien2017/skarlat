@@ -76,7 +76,9 @@ public class PublishController {
                     StringBuilder payload=new StringBuilder(sensorName+";");
                     payload.append(time+";");
                     payload.append(data);
-                    AWSIotMessage message = new NonBlockingPublishListener(topic, TestTopicQos, payload.toString());
+                    JSONObject obj = new JSONObject();
+                    obj.put("dataFrameMessage", payload.toString());
+                    AWSIotMessage message = new NonBlockingPublishListener(topic, TestTopicQos, obj.toString());
 
                     try {
                         awsIotClient.publish(message);
