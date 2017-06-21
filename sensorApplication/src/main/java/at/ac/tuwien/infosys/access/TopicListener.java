@@ -25,10 +25,11 @@ public class TopicListener extends AWSIotTopic {
     public void onMessage(AWSIotMessage message) {
         System.out.println(System.currentTimeMillis() + ": <<< " + message.getStringPayload());
 
-        DataFrame dataFrame = Utils.analyseMessage(super.getTopic(),message.getStringPayload());
-        influxAccess.sendProcessedDataFrame(dataFrame);         //send processed dataframe to database
+      //the next functionality was substituted by lambda functions
+      //  DataFrame dataFrame = Utils.analyseMessage(super.getTopic(),message.getStringPayload());
+      //  influxAccess.sendProcessedDataFrame(dataFrame);         //send processed dataframe to database
 
-        influxAccess.sendDataFrame(message.getStringPayload()); //preserve in db - raw message
+      //  influxAccess.sendDataFrame(message.getStringPayload()); //preserve in db - raw message
     }
 
 }

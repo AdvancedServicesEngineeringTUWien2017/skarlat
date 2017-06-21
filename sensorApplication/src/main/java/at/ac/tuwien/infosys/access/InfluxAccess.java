@@ -8,6 +8,7 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.dto.QueryResult.*;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class InfluxAccess {
 
     }
 
+    //get all sensors from sensors table in PositioningData
     public List<SensorDescription> getAllSensors(){
         Query query = new Query("SELECT * FROM sensor", databaseMain);
         QueryResult queryResult = influxDB.query(query);
@@ -63,10 +65,13 @@ public class InfluxAccess {
         return sensorDescriptionList;
     }
 
+    //sends raw data frame to influx access
     public void sendDataFrame(String measurement){
-        String[] measurementArray = measurement.split(";");
+        JSONObject jsonObject = new JSONObject(measurement);
+        String rawDataFrame = jsonObject.getString("dataFrameMessage");
+        String[] measurementArray = rawDataFrame.split(";");
         Long timeConverted = Long.parseLong(measurementArray[1]);
-          Point point1 = Point.measurement(measurementArray[0])
+        Point point1 = Point.measurement(measurementArray[0])
                 .time(timeConverted, TimeUnit.NANOSECONDS)
                 .addField("data", measurementArray[2])
                 .build();
@@ -108,7 +113,7 @@ public class InfluxAccess {
                 if (columns1.get(i).equals("time")) dataFrame.setTimeStamp(objectList.get(i).toString());
                 if (columns1.get(i).equals("data")) dataFrame.setData(objectList.get(i).toString());
                 if (columns1.get(i).equals("colors")) dataFrame.setStringColors(objectList.get(i).toString());
-                if (columns1.get(i).equals("matrix")) dataFrame.setStringMatrix(objectList.get(i).toString());
+              //  if (columns1.get(i).equals("matrix")) dataFrame.setStringMatrix(objectList.get(i).toString());
                 if (columns1.get(i).equals("svg")) dataFrame.setSvgImage(objectList.get(i).toString());
 
             }
@@ -117,6 +122,7 @@ public class InfluxAccess {
         return  dataFrameList;
     }
 
+    //not used any more, substrituted by aws iot lambda function
     public void sendProcessedDataFrame(DataFrame dataFrame) {
         Point point1 = Point.measurement("sensor_"+dataFrame.getSensorId())
                 .time(Long.parseLong(dataFrame.getTimeStamp()), TimeUnit.NANOSECONDS)

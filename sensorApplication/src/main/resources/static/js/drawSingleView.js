@@ -22,13 +22,14 @@ function drawSingleView(element) {
     var svg  = currentRow.cells[1].innerHTML;
 
     //workaround to get to tag <svg> and replace substituted special symbols
-    svg = svg.split("dtd'&gt;").pop();
     var convert = function(convert){
         return $("<svg />", { html: convert }).text();
     };
     svg = convert(svg);
-
-    div.innerHTML=svg;
+    var parser = new DOMParser;
+    var dom = parser.parseFromString(svg,'text/html');
+    var decodedString = dom.body.textContent;
+    div.innerHTML=decodedString;
     div.style.visibility = 'visible';
     document.getElementById("div__graph__palette").style.visibility = 'visible';
     document.getElementById("ifNoDataFrames3").style.display='none';
