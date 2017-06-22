@@ -28,7 +28,7 @@ public class NonBlockingPublishListener extends AWSIotMessage {
 
     @Override
     public void onSuccess() {
-        System.out.println(System.currentTimeMillis() + ": >>> " + getStringPayload());
+        System.out.println(System.currentTimeMillis() + " published " );
     }
 
     @Override

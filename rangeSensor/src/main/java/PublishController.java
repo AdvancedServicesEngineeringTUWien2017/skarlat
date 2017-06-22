@@ -53,6 +53,7 @@ public class PublishController {
             this.awsIotClient = awsIotClient;
             this.paths = Utils.getFilePathsInFolder(sensorName);
             this.i = paths.iterator();
+
         }
 
         @Override
@@ -70,11 +71,14 @@ public class PublishController {
                         e.printStackTrace();
                     }
                     System.out.println(fileName);
-                    String time = Objects.toString(rdf.time, null);
+                    String time = Objects.toString(System.currentTimeMillis(),null);
+
+                  //  String time = Objects.toString(rdf.time, null);
+                    System.out.println(time);
                     String data = Arrays.toString(rdf.data);
 
                     StringBuilder payload=new StringBuilder(sensorName+";");
-                    payload.append(time+";");
+                    payload.append(time+"000000;");
                     payload.append(data);
                     JSONObject obj = new JSONObject();
                     obj.put("dataFrameMessage", payload.toString());

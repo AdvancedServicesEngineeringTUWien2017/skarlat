@@ -51,13 +51,13 @@ public class LambdaPostToInflux implements RequestHandler<RequestClass, Response
         }
     }
 
-
     //parses message from mqtt into data frame with processed data (colors, svg)
     private static DataFrame analyseMessage(String message){
         String[] measurementArray = message.split(";");
         String sensorName =  measurementArray[0].substring(Math.max(measurementArray[0].length() - 2, 0));;
         System.out.println("Topic: "+sensorName);
         String time = measurementArray[1];
+        System.out.println("time="+time);
         String data = measurementArray[2];
         try {
             DataFrame dataFrame = new DataFrame(sensorName,time,data);
