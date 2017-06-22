@@ -25,7 +25,7 @@ public class TopicListener extends AWSIotTopic {
     public void onMessage(AWSIotMessage message) {
         System.out.println(System.currentTimeMillis() + ": <<< " + message.getStringPayload());
 
-      //the next functionality was substituted by lambda functions
+      //the next functionality was substituted by lambda functions, but this writing to influx db works, left here just in case it is needed
       //  DataFrame dataFrame = Utils.analyseMessage(super.getTopic(),message.getStringPayload());
       //  influxAccess.sendProcessedDataFrame(dataFrame);         //send processed dataframe to database
 

@@ -1,6 +1,6 @@
 package at.ac.tuwien.infosys.access;
 
-/*
+/*adapted from:
  * Copyright 2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -41,7 +41,7 @@ import java.util.Properties;
  * certificate from the resource files.
  */
 public class ConnectionManager {
-    private static final String PropertyFile = "resources/application.properties";
+   // private static final String PropertyFile = "/properties/application.properties";
 
     public static class KeyStorePasswordPair {
         public KeyStore keyStore;
@@ -53,24 +53,24 @@ public class ConnectionManager {
         }
     }
 
-    public static String getConfig(String name) {
-        Properties prop = new Properties();
-        URL resource = ConnectionManager.class.getResource(PropertyFile);
-        if (resource == null) {
-            return null;
-        }
-        try (InputStream stream = resource.openStream()) {
-            prop.load(stream);
-        } catch (IOException e) {
-            return null;
-        }
-        String value = prop.getProperty(name);
-        if (value == null || value.trim().length() == 0) {
-            return null;
-        } else {
-            return value;
-        }
-    }
+//    public static String getConfig(String name) {
+//        Properties prop = new Properties();
+//        URL resource = ConnectionManager.class.getResource(PropertyFile);
+//        if (resource == null) {
+//            return null;
+//        }
+//        try (InputStream stream = resource.openStream()) {
+//            prop.load(stream);
+//        } catch (IOException e) {
+//            return null;
+//        }
+//        String value = prop.getProperty(name);
+//        if (value == null || value.trim().length() == 0) {
+//            return null;
+//        } else {
+//            return value;
+//        }
+//    }
 
     public static KeyStorePasswordPair getKeyStorePasswordPair(String certificateFile, String privateKeyFile) {
         return getKeyStorePasswordPair(certificateFile, privateKeyFile, null);

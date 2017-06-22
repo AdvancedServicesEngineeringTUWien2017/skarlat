@@ -27,6 +27,7 @@ import static at.ac.tuwien.infosys.controllers.MainNavController.redirectWithErr
 @RequestMapping(SENSORS_URL)
 public class SensorApplicationController {
     private static final String ID = "/{id}";
+    private static final String DATA_FRAME_ID = "/{dataFrameId}";
     private final SessionProxy sessionProxy;
 
     @Autowired
@@ -38,6 +39,12 @@ public class SensorApplicationController {
     public String showDataFrames(@PathVariable String id, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) throws Exception {
         ModelAttributes.initForSensors(model);
         return get_start(id, model, redirectAttributes);
+    }
+
+    @RequestMapping(value = ID+"/show/"+DATA_FRAME_ID, method = RequestMethod.GET)
+    public String showDataFrame(@PathVariable String id, @PathVariable String dataFrameId, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) throws Exception {
+        sessionProxy.getInfluxSessionBean().getSvgByDataFrameId(id,dataFrameId);
+        return "sensor";
     }
 
     private String get_start(String id, Model model, RedirectAttributes redirectAttributes) {

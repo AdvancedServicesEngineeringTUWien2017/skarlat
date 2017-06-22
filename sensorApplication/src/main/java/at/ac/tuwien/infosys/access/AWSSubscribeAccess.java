@@ -28,10 +28,24 @@ public class AWSSubscribeAccess {
     private static final AWSIotQos TestTopicQos = AWSIotQos.QOS0;
     private static String[] topics;
     private static AWSIotMqttClient awsIotMqttClient;
+    private static String clientEndpoint;
+    private static String clientId;
+    private static String certificateFile;
+    private static String privateKeyFile;
 
     @Autowired
-    public AWSSubscribeAccess(SessionProxy sessionProxy) {
+    public AWSSubscribeAccess(SessionProxy sessionProxy,
+                              @Value("${clientEndpoint}") String clientEndpoint,
+                              @Value("${clientId}") String clientId,
+                              @Value("${topics}") String topicsString,
+                              @Value("${certificateFile}") String certificateFile,
+                              @Value("${privateKeyFile}") String privateKeyFile) {
         this.sessionProxy = sessionProxy;
+        this.clientEndpoint =clientEndpoint;
+        this.clientId=clientId;
+        this.topics=topicsString.split(",");
+        this.certificateFile=certificateFile;
+        this.privateKeyFile=privateKeyFile;
         initClient();
         try {
             awsIotMqttClient.connect();
@@ -41,29 +55,9 @@ public class AWSSubscribeAccess {
     }
 
     private static void initClient() {
-        Properties prop = new Properties();
-        try (InputStream stream = new FileInputStream("src/main/resources/application.properties")) {
-            prop.load(stream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String clientEndpoint = prop.getProperty("clientEndpoint");
-        String clientId = prop.getProperty("clientId");
-        topics = (prop.getProperty("topics")).split(",");
-        String certificateFile = prop.getProperty("certificateFile");
-        String privateKeyFile = prop.getProperty("privateKeyFile");
         if (awsIotMqttClient == null && certificateFile != null && privateKeyFile != null) {
-            String algorithm = ConnectionManager.getConfig("keyAlgorithm");
-            ConnectionManager.KeyStorePasswordPair pair = ConnectionManager.getKeyStorePasswordPair(certificateFile, privateKeyFile, algorithm);
+            ConnectionManager.KeyStorePasswordPair pair = ConnectionManager.getKeyStorePasswordPair(certificateFile, privateKeyFile, null);
             awsIotMqttClient=new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
-        }
-        if (awsIotMqttClient == null) {
-            String awsAccessKeyId = ConnectionManager.getConfig("awsAccessKeyId");
-            String awsSecretAccessKey = ConnectionManager.getConfig("awsSecretAccessKey");
-            String sessionToken = ConnectionManager.getConfig("sessionToken");
-            if (awsAccessKeyId != null && awsSecretAccessKey != null) {
-                awsIotMqttClient=new AWSIotMqttClient(clientEndpoint, clientId, awsAccessKeyId, awsSecretAccessKey, sessionToken);
-            }
         }
         if (awsIotMqttClient == null) {
             throw new IllegalArgumentException("Failed to construct client due to missing certificate or credentials.");

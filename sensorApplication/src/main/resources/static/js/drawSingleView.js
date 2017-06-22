@@ -1,6 +1,7 @@
 
 function drawSingleView(element) {
 
+
     var div = document.getElementById("div__graph");
     //delete previous graph if any
     while (div.firstChild) { div.removeChild(div.firstChild); }

@@ -37,6 +37,9 @@ public class InfluxSessionBean {
     public SensorDescription getSensorByName(String sensorName){
         return this.influxAccess.getSensorByName(sensorName);
     }
+    public String getSvgByDataFrameId(String sensorName,String timeStamp){
+        return this.influxAccess.getSvgByDataFrameId(sensorName,timeStamp);
+    }
 }
 
 

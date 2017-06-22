@@ -3,6 +3,7 @@ package at.ac.tuwien.infosys.entities;
 import at.ac.tuwien.infosys.Utils;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
+import org.unbescape.html.HtmlEscape;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,9 +13,12 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.UUID;
 
+import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
+
 /**
  * Created by lenaskarlat on 5/24/17.
  */
+//this functionality was substituted by a lambda function, but it is still here just in case something else is needed in the future
 public class DataFrame {
 
     private String id;
@@ -23,6 +27,7 @@ public class DataFrame {
     private String data;
     private String[][] matrix;
     private String[][] colors;
+    private String stringColors;
     private String svgImage;
 
     public DataFrame() {
@@ -66,7 +71,7 @@ public class DataFrame {
     public String[][] getColors() { return colors; }
 
     public String getStringColors(){
-        String lineSeparator = System.lineSeparator();
+        String lineSeparator = "?";
         StringBuilder sb = new StringBuilder();
 
         for (String[] row : colors) {
@@ -77,7 +82,9 @@ public class DataFrame {
     }
 
 
-    public String getSvgImage() { return svgImage; }
+    public String getSvgImage() {
+        return svgImage;
+    }
 
 
     private String createSvgString() throws IOException {

@@ -49,17 +49,19 @@ public class InfluxAccess {
         for (List<Object> objectList:values) {
             String sensorName ="";
             String sensorType="";
+            Boolean isTurnedOff=false;
             int x=0;
             int y=0;
             int z=0;
             for (int i=0; i<columns.size(); i++) {
                 if (columns.get(i).equals("id"))  sensorName = objectList.get(i).toString();
+                if (columns.get(i).equals("value"))  { if (objectList.get(i).toString().equals("OFF")) isTurnedOff=true;};
                 if (columns.get(i).equals("type")) sensorType = objectList.get(i).toString();
                 if (columns.get(i).equals("x")) x= Integer.valueOf(objectList.get(i).toString());
                 if (columns.get(i).equals("y")) y=Integer.valueOf(objectList.get(i).toString());
                 if (columns.get(i).equals("z")) z=Integer.valueOf(objectList.get(i).toString());
             }
-            SensorDescription sensor = new SensorDescription(false, sensorName,sensorType,x,y,z);
+            SensorDescription sensor = new SensorDescription(isTurnedOff, sensorName,sensorType,x,y,z);
             sensorDescriptionList.add(sensor);
         }
         return sensorDescriptionList;
@@ -111,15 +113,32 @@ public class InfluxAccess {
             DataFrame dataFrame = new DataFrame();
             for (int i=0; i<columns1.size(); i++) {
                 if (columns1.get(i).equals("time")) dataFrame.setTimeStamp(objectList.get(i).toString());
+                if (columns1.get(i).equals("id")) dataFrame.setId(objectList.get(i).toString());
                 if (columns1.get(i).equals("data")) dataFrame.setData(objectList.get(i).toString());
                 if (columns1.get(i).equals("colors")) dataFrame.setStringColors(objectList.get(i).toString());
-              //  if (columns1.get(i).equals("matrix")) dataFrame.setStringMatrix(objectList.get(i).toString());
-                if (columns1.get(i).equals("svg")) dataFrame.setSvgImage(objectList.get(i).toString());
+            //    if (columns1.get(i).equals("matrix")) dataFrame.setStringMatrix(objectList.get(i).toString());
+                if (columns1.get(i).equals("svg")) {
+                    String svg = objectList.get(i).toString();
+
+                    dataFrame.setSvgImage(objectList.get(i).toString());
+                }
 
             }
             dataFrameList.add(dataFrame);
         }
         return  dataFrameList;
+    }
+
+    public String getSvgByDataFrameId(String sensorName, String dataFrameId){
+        Query queryDataFrames = new Query("SELECT svg FROM sensor_"+sensorName+"WHERE id='"+dataFrameId+"'", databaseSeriesProcessed);
+        QueryResult queryDataFramesResult = influxDB.query(queryDataFrames);
+        List<Result> dataFramesResults = queryDataFramesResult.getResults();
+        Series seriesDataFrames = dataFramesResults.get(0).getSeries().get(0);
+        List<List<Object>> valuesDataFrames = seriesDataFrames.getValues();
+        List<Object> objectList=valuesDataFrames.get(0);
+        String svg = objectList.get(0).toString();
+        System.out.println(svg);
+        return  svg;
     }
 
     //not used any more, substrituted by aws iot lambda function
