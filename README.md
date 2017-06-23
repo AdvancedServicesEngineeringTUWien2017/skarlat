@@ -22,21 +22,26 @@ It is also necessary to set up InfluxDB Instance.
 Main Application
 
 -------sensorApplication----------------------
+
 To build an app and docker image and store it in dockerhub:
 
 1. build anapplication
+
 
 	$mvn clean package
 
 2. build docker image (the script is provided in the repository)
 
+
 	$./docker-build.sh
 
 3. login to docker
 
+
 	$docker login
 
 4. push latest image to dockerhub:
+
 
 	$docker push lenaskarlat/sensor-app
 
@@ -47,12 +52,14 @@ To deploy an app at the remote host:
 3. installed docker according to http://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html
 4. Pull docker from dockerhub
 
-	$docker pull lenaskarlat/sensor-app
+
+	$$docker pull lenaskarlat/sensor-app
 
 5. amazon console -> Security Groups added Custom tcp port 34006 to be open for all.
 6. create folder /certs in root in the host machine and copy there two files called: positioning_app-certificate.pem.crt and positioning_app-private.pem.key. These 2 files are obtained from AWS IoT when a "thing" corresponding to this application is created. This created thing is neeeded to enable subscriptions to AWS IoT MQTT topics. If the files named differently, they should be also specified in the run script ./docker-run.sh. For details see section AWS IoT in this readme.
 
 7. run docker container (contains necessary environment variables, port, mounting folders)
+
 
 	$./docker-run.sh (the script is provided in the repository)
 
