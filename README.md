@@ -1,6 +1,22 @@
 # skarlat
 Advances Service Engineering course contributions
 
+This project consists of 4 subprojects:
+
+Main Application - sensorApplication
+Sensor Data Emitter - rangeSensor
+Lambda function to forward raw data to Influx - lambda-raw
+Lambda function to process and forward processed data to Influx - lambda-test
+
+The goal of this project is to get the data from sensor, publish in in AWS Iot MQTT, trigger lambda functions, accumulate data in InfluxDB and visualize it in the main application.
+It is necessary to have an AWS account. 
+AWS services used for this project:
+- AWS IOT
+- AWS Lambda
+- AWS EC2
+
+It is also necessary to set up InfluxDB Instance. 
+
 ----------------------------------------------
 Main Application
 
@@ -9,7 +25,7 @@ To build an app and docker image and store it in dockerhub:
 
 1. build anapplication
 	$ mvn clean package
-2. build docker image
+2. build docker image (the script is provided in the repository)
 	$ ./docker-build.sh
 3. login to docker
 	$ docker login
@@ -17,7 +33,7 @@ To build an app and docker image and store it in dockerhub:
 	$ docker push lenaskarlat/sensor-app
 
 To deploy an app at the remote host:
-1. created tiny amazon linux machine
+1. created amazon linux machine
 2. connected to it using ssh
 3. installed docker according to http://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html
 4. Pull docker from dockerhub
@@ -26,9 +42,9 @@ To deploy an app at the remote host:
 6. create folder /certs in root in the host machine and copy there two files called: positioning_app-certificate.pem.crt and positioning_app-private.pem.key. These 2 files are obtained from AWS IoT when a "thing" corresponding to this application is created. This created thing is neeeded to enable subscriptions to AWS IoT MQTT topics. If the files named differently, they should be also specified in the run script ./docker-run.sh. For details see section AWS IoT in this readme.
 
 7. run docker container (contains necessary environment variables, port, mounting folders)
-	$ ./docker-run.sh
+	$ ./docker-run.sh (the script is provided in the repository)
 
-Running: ec2-54-149-45-132.us-west-2.compute.amazonaws.com:34006
+Running: htpp://<host_ip>:34006
 
 ---------------------------------------------------------
 Sensor Simulator
@@ -94,6 +110,29 @@ Example insert data with curl with credentials:
 	$curl -i -XPOST 'http://ip.of.influx.db:8086/write?db=DataBaseName' -u login:password --data-binary 'seriesName,tag1=value01,tag2=value02 value=someValue time'
 
 Inserting data to Influx is performed in from the main application and from lambda functions triggered by receiving a message to AWS IoT MQTT from AWS IoT.
+
+---------------------------------------------------------
+AWS IoT
+
+It is necessary to create "things" for each oof simulated sensors, and connect sensors to those things. For that, AWS IoT "create thing" instructions have to be followed.
+Also, the main application also has to have a corresponding "thing" in the AWS IoT registry to enable subscription to topic.
+It is necessary to follow all security instructions to create and download corresponding certificates and keys, and according security policies. For sensor things, policy should include "iot:connect" and "iot:publish" actions. The main application policy has to have apart from those 2 actions "iot:subscribe". 
+Also, it is needed to create a rule to connect lambda functions. Rule query statement has to be: 
+	SELECT * FROM 'sensors/+'
+and in Actions 2 lambda functions have to be chosen.
+
+---------------------------------------------------------
+AWS Lambda
+
+For general instructions on how to create a lambda functions, http://docs.aws.amazon.com/lambda/latest/dg/get-started-step4-optional.html
+For each of lambda subprojects, a lambda function has to be created.
+Configuration of lamda-test and lambda-raw:
+Runtime: Java 8
+Handler: lambda.LambdaPostToInflux::handleRequest, and for lambda-raw the handler is: lambda.LambdaPostRawToInflux::handleRequest. The handler names consist of a package name in src, then main class, and a handler method name.
+For Trigger: choose AWS IoT, custom rule. Add in rule: 
+	SELECT * FROM 'sensors/+'
+For the code: add a corresponding jar with all dependencies included. Code with all included dependencies is packaged by 
+	$ mvn clean package
 
 
 
