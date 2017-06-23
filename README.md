@@ -53,7 +53,7 @@ To deploy an app at the remote host:
 4. Pull docker from dockerhub
 
 
-	$$docker pull lenaskarlat/sensor-app
+	$docker pull lenaskarlat/sensor-app
 
 5. amazon console -> Security Groups added Custom tcp port 34006 to be open for all.
 6. create folder /certs in root in the host machine and copy there two files called: positioning_app-certificate.pem.crt and positioning_app-private.pem.key. These 2 files are obtained from AWS IoT when a "thing" corresponding to this application is created. This created thing is neeeded to enable subscriptions to AWS IoT MQTT topics. If the files named differently, they should be also specified in the run script ./docker-run.sh. For details see section AWS IoT in this readme.
