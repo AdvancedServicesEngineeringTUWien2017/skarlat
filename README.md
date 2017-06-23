@@ -1,4 +1,4 @@
-# skarlat
+# Range sensor data emitting and processing. Olena Skarlat.
 Advances Service Engineering course contributions
 
 This project consists of 4 subprojects:
